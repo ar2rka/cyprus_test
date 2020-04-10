@@ -1,9 +1,9 @@
 .DS_Store
-reconsiliation/venv/
-reconsiliation/.venv/
+reconsiliation/venv/*
+reconsiliation/.venv/*
 reconsiliation/venv
 reconsiliation/.venv
-reconsiliation/
+reconsiliation/*
 reconsiliation
 venv
 .venv
