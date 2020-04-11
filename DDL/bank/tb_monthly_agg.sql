@@ -8,3 +8,5 @@ CREATE TABLE bank.tb_monthly_agg (
 ORDER BY login
 SEGMENTED BY HASH(login) ALL NODES
 PARTITION BY date_from;
+-- в данном случае преполагается, что возможны перерасчеты, поэтому добавлено calculation_ts
+-- это же поле есть в ключе для сохранения истории в случае перерасчетов

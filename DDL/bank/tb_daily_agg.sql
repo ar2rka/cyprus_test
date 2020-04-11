@@ -8,3 +8,6 @@ CREATE TABLE bank.tb_daily_agg (
 ORDER BY login
 SEGMENTED BY HASH(login) ALL NODES
 PARTITION BY date_from;
+-- структура таблиц зависит от сценариев использования
+-- в данном случае преполагается, что возможны перерасчеты, поэтому добавлено calculation_ts
+-- это же поле есть в ключе для сохранения истории в случае перерасчетов

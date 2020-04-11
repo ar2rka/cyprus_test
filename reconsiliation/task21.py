@@ -2,17 +2,23 @@ from pyspark.sql import SparkSession, dataframe
 from pyspark import SparkConf
 import pyspark.sql.functions as f
 from reconciliation_by_types import char_rec, date_rec, int_rec
+import logging as log
+import sys
 
 
 def read_db_table(spark_session: SparkSession, table_name: str) -> dataframe:
     # читаем основную таблицу из БД
-    df_source_table = spark_session.read.format("jdbc")\
-        .option("url", "jdbc:vertica://localhost:5433/notdocker")\
-        .option("driver", "com.vertica.jdbc.Driver")\
-        .option("dbtable", "bank.tb_transactions")\
-        .option("user", "dbadmin")\
-        .option("password", "foo123")\
-        .load()
+    try:
+        df_source_table = spark_session.read.format("jdbc")\
+            .option("url", "jdbc:vertica://localhost:5433/notdocker")\
+            .option("driver", "com.vertica.jdbc.Driver")\
+            .option("dbtable", "bank.tb_transactions")\
+            .option("user", "dbadmin")\
+            .option("password", "foo123")\
+            .load()
+    except:
+        log.error('failed db connection')
+        sys.exit(1)
 
     # приводим ts к нашему формату для сравнения
     df_source_table_ts = df_source_table \
@@ -28,7 +34,11 @@ def read_db_table(spark_session: SparkSession, table_name: str) -> dataframe:
 
 def read_parquet(spark_session: SparkSession, source_path: str) -> dataframe:
     # читаем второй источник - файл формата parquet
-    df_second_source = spark_session.read.parquet(source_path)
+    try:
+        df_second_source = spark_session.read.parquet(source_path)
+    except:
+        log.error('failed parquet reading')
+        sys.exit(1)
 
     # добавляем колонку с приведенным форматом unix_time к нашему timestamp;
     # удаляем старую колонку с unix_time;
@@ -51,7 +61,7 @@ def read_parquet(spark_session: SparkSession, source_path: str) -> dataframe:
 if __name__ == "__main__":
     tolerance_percent = 5
     tolerance_levenshtein = 1
-    tolerance_seconds = 5*60
+    tolerance_seconds = 5 * 60
     first_source = "bank.tb_transactions"
     second_source = "second_source"
 
@@ -61,7 +71,11 @@ if __name__ == "__main__":
     conf.set("spark.executorEnv.PYTHONHASHSEED", "0")
 
     # инициализируем спарк-сессию
-    spark = SparkSession.builder.master("local[2]").appName("task21").config(conf=conf).getOrCreate()
+    try:
+        spark = SparkSession.builder.master("local[2]").appName("task21").config(conf=conf).getOrCreate()
+    except:
+        log.error('spark initialization failed')
+        sys.exit(1)
 
     # считываем исходные данные
     df_source_1 = read_db_table(spark, first_source)
@@ -74,7 +88,7 @@ if __name__ == "__main__":
               "outer")
 
     # получаем датафрейм с данными, прошедшими сверку
-    # .cache() нужен для оптимизации работы спарка: позволяет не повторять переиспользуемые результаты расчетов
+    # .cache() нужен для оптимизации работы спарка: позволяет не повторять переиспользуемые расчеты
     df_clean_data = df_for_reconciliation\
         .filter("row_sha2 == row2_sha2")\
         .select("transaction_uid", "login", "counter_login", "transaction_type", "unix_timestamp", "comment", "amount")\
@@ -94,12 +108,15 @@ if __name__ == "__main__":
         .drop("unix_timestamp") \
         .select("transaction_uid", "login", "counter_login", "transaction_type", "transaction_ts", "comment", "amount")\
 
-    # сохраняем (insert) результат в вертику в предварительно созданную таблицу;
-    df_final.write.format("jdbc")\
-        .option("url", "jdbc:vertica://localhost:5433/notdocker")\
-        .option("driver", "com.vertica.jdbc.Driver")\
-        .option("dbtable", "bank.tb_transactions_clean")\
-        .option("user", "dbadmin")\
-        .option("password", "foo123") \
-        .mode("append") \
-        .save()
+    try:
+        # сохраняем (insert) результат в вертику в предварительно созданную таблицу;
+        df_final.write.format("jdbc")\
+            .option("url", "jdbc:vertica://localhost:5433/notdocker")\
+            .option("driver", "com.vertica.jdbc.Driver")\
+            .option("dbtable", "bank.tb_transactions_clean")\
+            .option("user", "dbadmin")\
+            .option("password", "foo123") \
+            .mode("append") \
+            .save()
+    except:
+        log.error('writing to db failed')
