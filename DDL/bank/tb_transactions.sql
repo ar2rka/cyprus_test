@@ -1,8 +1,8 @@
 CREATE TABLE bank.tb_transactions2 (
     transaction_uid int,
-    login int,
+    login int NOT NULL,
     counter_login int,
-    transaction_type int,
+    transaction_type int NOT NULL,
     transaction_ts timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     comment varchar(256),
     amount money,
