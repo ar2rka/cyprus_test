@@ -1,4 +1,4 @@
 .DS_Store
-reconsiliation/.venv/
-reconsiliation/.idea/
-
+reconciliation/.venv/
+reconciliation/.idea/
+reconciliation/test/.pytest_cache
