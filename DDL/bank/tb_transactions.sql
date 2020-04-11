@@ -1,4 +1,4 @@
-CREATE TABLE bank.tb_transactions2 (
+CREATE TABLE bank.tb_transactions (
     transaction_uid int,
     login int NOT NULL,
     counter_login int,
@@ -12,3 +12,4 @@ ORDER BY transaction_uid
 SEGMENTED BY HASH(transaction_uid) ALL NODES
 PARTITION BY transaction_ts::DATE
 GROUP BY CALENDAR_HIERARCHY_DAY(transaction_ts::DATE, 3, 3);
+
