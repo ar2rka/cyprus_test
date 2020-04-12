@@ -22,7 +22,7 @@
 * ```pip3 install -r ./requirements.txt```
 
 Первый источник -- таблица ```DDL/bank/tb_transactions.sql``` с тестовыми данными ```DML/bank/tb_transactions.sql```  
-В качестве второго источника выбран файл формата parquet ```reconciliation/second_source```, для удобства изучения содержимое файла продублировано в формате CSV ```reconciliation/second_source.csv```  
+В качестве второго источника выбран файл формата parquet ```reconciliation/second_source```, для удобства изучения содержимое файла продублировано в формате CSV ```reconciliation/second_source.csv```. Для разработки и тестирования в несколько последних строк второго источника были внесены ошибки разных типов.
 
 #### Задача 2-1
 Скрипт для запуска - ```reconciliation/task21.py```
