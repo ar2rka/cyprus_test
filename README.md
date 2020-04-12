@@ -28,4 +28,3 @@
 Настройка толеранса для реконсиляции - ```reconciliation/config.ini```
 #### Задача 2-2
 Скрипт для запуска - ```reconciliation/task22.py```
-
