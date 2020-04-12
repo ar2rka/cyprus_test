@@ -14,6 +14,7 @@
 
 ## Задание 2
 #### Подготовка. Задание выполено на python с pyspark.
+Директория проекта -- ```reconciliation```
 Установка:
 * ```pip3 install --upgrade pip```
 * ```python3 -m venv .venv```
