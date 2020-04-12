@@ -100,7 +100,10 @@ if __name__ == "__main__":
         .select("transaction_uid", "login", "counter_login", "transaction_type", "unix_timestamp", "comment", "amount")\
         .cache()
 
-    # Реконсиляция по типам
+    # Реконсиляция по типам.
+    # Выполняется параллельно на одном входном наборе данных
+    # из предположения, что не допускается несколько разнородных ошибок в одной строке.
+    # Исходя из других вводных, легко можно изменить на последовательную обработку
     df_reconciliation_char = char_rec(df_for_reconciliation, tolerance_levenshtein)
     df_reconciliation_date = date_rec(df_for_reconciliation, tolerance_seconds)
     df_reconciliation_int = int_rec(df_for_reconciliation, tolerance_percent)
