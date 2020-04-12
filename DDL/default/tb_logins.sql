@@ -20,3 +20,4 @@ SELECT
 FROM "default".tb_logins
 ORDER BY user_uid, login
 SEGMENTED BY HASH(user_uid) ALL NODES;
+-- проекция создана для оптимизации запросов с джойном по клиентам

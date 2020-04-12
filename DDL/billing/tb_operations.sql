@@ -25,3 +25,4 @@ SELECT
 FROM billing.tb_operations
 ORDER BY operation_uid, login
 SEGMENTED BY HASH(login) ALL NODES;
+-- проекция создана для оптимизации запросов с джойном по счету
